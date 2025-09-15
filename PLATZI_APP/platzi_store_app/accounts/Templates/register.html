@@ -1,0 +1,532 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Crear Cuenta - Platzi Store{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="auth-card">
+      <div class="auth-card-body">
+        <div class="text-center mb-4">
+          <div class="auth-icon">
+            <i class="fas fa-user-astronaut fa-3x"></i>
+          </div>
+          <h2 class="auth-title">Registro en el Sistema</h2>
+          <p class="auth-subtitle">Únete a la plataforma tecnológica</p>
+        </div>
+        
+        <!-- Mostrar mensajes de error o éxito -->
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="post" novalidate class="auth-form" id="registerForm">
+          {% csrf_token %}
+
+          <!-- Campo Username -->
+          <div class="mb-3">
+            <label for="{{ form.username.id_for_label }}" class="form-label">
+              <i class="fas fa-user tech-icon"></i> {{ form.username.label }}
+            </label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-user"></i>
+              </span>
+              {{ form.username }}
+            </div>
+            {% if form.username.errors %}
+              <div class="text-danger small mt-1">
+                {% for error in form.username.errors %}
+                  <div><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Campo Email -->
+          <div class="mb-3">
+            <label for="{{ form.email.id_for_label }}" class="form-label">
+              <i class="fas fa-envelope tech-icon"></i> {{ form.email.label }}
+            </label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-envelope"></i>
+              </span>
+              {{ form.email }}
+            </div>
+            {% if form.email.errors %}
+              <div class="text-danger small mt-1">
+                {% for error in form.email.errors %}
+                  <div><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Campos Nombre y Apellido en una fila -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                <i class="fas fa-id-card tech-icon"></i> {{ form.first_name.label }}
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-id-card"></i>
+                </span>
+                {{ form.first_name }}
+              </div>
+              {% if form.first_name.errors %}
+                <div class="text-danger small mt-1">
+                  {% for error in form.first_name.errors %}
+                    <div><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+            <div class="col-md-6">
+              <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                {{ form.last_name.label }}
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-id-card"></i>
+                </span>
+                {{ form.last_name }}
+              </div>
+              {% if form.last_name.errors %}
+                <div class="text-danger small mt-1">
+                  {% for error in form.last_name.errors %}
+                    <div><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Campo Contraseña -->
+          <div class="mb-3">
+            <label for="{{ form.password1.id_for_label }}" class="form-label">
+              <i class="fas fa-lock tech-icon"></i> {{ form.password1.label }}
+            </label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-lock"></i>
+              </span>
+              {{ form.password1 }}
+              <button class="btn btn-outline-secondary" type="button" id="togglePassword1">
+                <i class="fas fa-eye" id="eyeIcon1"></i>
+              </button>
+            </div>
+            <div class="password-strength mt-2">
+              <div class="progress" style="height: 5px;">
+                <div class="progress-bar" id="passwordStrength" style="width: 0%"></div>
+              </div>
+              <small id="passwordHelp" class="form-text text-muted">
+                Mínimo 8 caracteres
+              </small>
+            </div>
+            {% if form.password1.errors %}
+              <div class="text-danger small mt-1">
+                {% for error in form.password1.errors %}
+                  <div><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Campo Confirmar Contraseña -->
+          <div class="mb-3">
+            <label for="{{ form.password2.id_for_label }}" class="form-label">
+              <i class="fas fa-shield-alt tech-icon"></i> {{ form.password2.label }}
+            </label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="fas fa-shield-alt"></i>
+              </span>
+              {{ form.password2 }}
+              <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                <i class="fas fa-eye" id="eyeIcon2"></i>
+              </button>
+            </div>
+            <small id="passwordMatch" class="form-text"></small>
+            {% if form.password2.errors %}
+              <div class="text-danger small mt-1">
+                {% for error in form.password2.errors %}
+                  <div><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Errores generales del formulario -->
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {% for error in form.non_field_errors %}
+                <i class="fas fa-exclamation-triangle"></i> {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <!-- Términos y condiciones -->
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="acceptTerms" required>
+            <label class="form-check-label" for="acceptTerms">
+              Acepto los <a href="#" class="tech-link">términos del sistema</a> y la 
+              <a href="#" class="tech-link">política de datos</a>
+            </label>
+          </div>
+
+          <!-- Botón de registro -->
+          <div class="d-grid gap-2 mb-3">
+            <button type="submit" class="btn btn-primary btn-lg auth-submit-btn" id="submitBtn">
+              <span class="spinner-border spinner-border-sm d-none" id="submitSpinner"></span>
+              <i class="fas fa-rocket" id="submitIcon"></i> Crear Cuenta
+            </button>
+          </div>
+
+          <!-- Enlaces adicionales -->
+          <div class="text-center">
+            <hr class="my-3">
+            <div class="auth-switch">
+              <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">
+                <i class="fas fa-sign-in-alt"></i> Ya tengo cuenta
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.auth-card {
+  background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 255, 136, 0.2);
+  overflow: hidden;
+}
+
+.auth-card-body {
+  padding: 3rem 2.5rem;
+  background: rgba(26, 26, 46, 0.95);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  margin: 3px;
+  border-radius: 17px;
+}
+
+.auth-icon {
+  color: #00ff88;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.5));
+}
+
+.auth-title {
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+  color: rgba(0, 255, 136, 0.8);
+  font-size: 0.95rem;
+}
+
+.tech-icon {
+  color: #00ff88;
+}
+
+.form-label {
+  color: #00ff88;
+  font-weight: 600;
+}
+
+.form-control {
+  background: rgba(26, 26, 46, 0.8) !important;
+  border: 2px solid rgba(0, 255, 136, 0.3) !important;
+  border-radius: 10px !important;
+  padding: 12px 15px !important;
+  color: #fff !important;
+  transition: all 0.3s ease;
+  border-left: none !important;
+}
+
+.form-control:focus {
+  border-color: rgba(0, 255, 136, 0.8) !important;
+  background: rgba(26, 26, 46, 0.9) !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 255, 136, 0.25) !important;
+  transform: translateY(-1px);
+  color: #fff !important;
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.input-group-text {
+  background: linear-gradient(135deg, #00ff88 0%, #0096ff 100%);
+  border: 2px solid rgba(0, 255, 136, 0.3);
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+  color: #1a1a2e;
+  font-weight: 600;
+}
+
+.btn-outline-secondary {
+  background: rgba(26, 26, 46, 0.8);
+  border: 2px solid rgba(0, 255, 136, 0.3);
+  border-left: none;
+  border-radius: 0 10px 10px 0;
+  color: #00ff88;
+}
+
+.btn-outline-secondary:hover {
+  background: rgba(0, 255, 136, 0.1);
+  border-color: rgba(0, 255, 136, 0.6);
+  color: #00ff88;
+}
+
+.auth-submit-btn {
+  background: linear-gradient(135deg, #00ff88 0%, #0096ff 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  color: #1a1a2e;
+}
+
+.auth-submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+  background: linear-gradient(135deg, #00e676 0%, #0088cc 100%);
+  color: #1a1a2e;
+}
+
+.auth-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-outline-primary {
+  border: 2px solid #00ff88;
+  border-radius: 10px;
+  color: #00ff88;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  background: rgba(26, 26, 46, 0.8);
+}
+
+.btn-outline-primary:hover {
+  background: linear-gradient(135deg, #00ff88 0%, #0096ff 100%);
+  border-color: transparent;
+  transform: translateY(-1px);
+  color: #1a1a2e;
+}
+
+.form-check-input:checked {
+  background-color: #00ff88;
+  border-color: #00ff88;
+}
+
+.form-check-label {
+  color: #fff;
+}
+
+.tech-link {
+  color: #00ff88;
+  text-decoration: none;
+}
+
+.tech-link:hover {
+  color: #0096ff;
+  text-decoration: underline;
+}
+
+.password-strength .progress {
+  background-color: rgba(26, 26, 46, 0.8);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.password-strength .progress-bar.bg-danger { 
+  background: linear-gradient(90deg, #ff4757, #ff6b7a) !important; 
+}
+.password-strength .progress-bar.bg-warning { 
+  background: linear-gradient(90deg, #ffa502, #ffb733) !important; 
+}
+.password-strength .progress-bar.bg-info { 
+  background: linear-gradient(90deg, #3742fa, #5352ed) !important; 
+}
+.password-strength .progress-bar.bg-success { 
+  background: linear-gradient(90deg, #00ff88, #0096ff) !important; 
+}
+
+.auth-switch {
+  padding: 1rem;
+  background: rgba(26, 26, 46, 0.6);
+  border-radius: 15px;
+  margin-top: 1rem;
+  border: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.alert {
+  background: rgba(26, 26, 46, 0.8);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  color: #fff;
+}
+
+.text-danger {
+  color: #ff4757 !important;
+}
+
+.text-muted {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+@media (max-width: 576px) {
+  .auth-card-body {
+    padding: 2rem 1.5rem;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Referencias a elementos
+  const password1 = document.getElementById('{{ form.password1.id_for_label }}');
+  const password2 = document.getElementById('{{ form.password2.id_for_label }}');
+  const passwordStrength = document.getElementById('passwordStrength');
+  const passwordHelp = document.getElementById('passwordHelp');
+  const passwordMatch = document.getElementById('passwordMatch');
+  const acceptTerms = document.getElementById('acceptTerms');
+  const submitBtn = document.getElementById('submitBtn');
+  const submitSpinner = document.getElementById('submitSpinner');
+  const submitIcon = document.getElementById('submitIcon');
+  const form = document.getElementById('registerForm');
+
+  // Toggle password visibility
+  function setupPasswordToggle(buttonId, fieldId, iconId) {
+    const toggleBtn = document.getElementById(buttonId);
+    const field = document.getElementById(fieldId);
+    const icon = document.getElementById(iconId);
+    
+    if (toggleBtn && field && icon) {
+      toggleBtn.addEventListener('click', function() {
+        const type = field.getAttribute('type') === 'password' ? 'text' : 'password';
+        field.setAttribute('type', type);
+        icon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+      });
+    }
+  }
+
+  setupPasswordToggle('togglePassword1', '{{ form.password1.id_for_label }}', 'eyeIcon1');
+  setupPasswordToggle('togglePassword2', '{{ form.password2.id_for_label }}', 'eyeIcon2');
+
+  // Password strength checker
+  if (password1 && passwordStrength && passwordHelp) {
+    password1.addEventListener('input', function() {
+      const password = this.value;
+      const strength = calculatePasswordStrength(password);
+      
+      passwordStrength.style.width = strength.percentage + '%';
+      passwordStrength.className = 'progress-bar ' + strength.class;
+      passwordHelp.textContent = strength.message;
+      passwordHelp.className = 'form-text ' + strength.textClass;
+    });
+  }
+
+  // Password match checker
+  if (password2 && passwordMatch) {
+    function checkPasswordMatch() {
+      const pass1 = password1 ? password1.value : '';
+      const pass2 = password2.value;
+      
+      if (pass2.length > 0) {
+        if (pass1 === pass2) {
+          passwordMatch.innerHTML = '<i class="fas fa-check-circle" style="color: #00ff88;"></i> Contraseñas coinciden';
+          passwordMatch.className = 'form-text';
+          passwordMatch.style.color = '#00ff88';
+        } else {
+          passwordMatch.innerHTML = '<i class="fas fa-times-circle" style="color: #ff4757;"></i> Contraseñas no coinciden';
+          passwordMatch.className = 'form-text';
+          passwordMatch.style.color = '#ff4757';
+        }
+      } else {
+        passwordMatch.innerHTML = '';
+      }
+    }
+
+    password2.addEventListener('input', checkPasswordMatch);
+    if (password1) password1.addEventListener('input', checkPasswordMatch);
+  }
+
+  // Form submission handling
+  if (form && submitBtn) {
+    form.addEventListener('submit', function(e) {
+      // Check if terms are accepted
+      if (acceptTerms && !acceptTerms.checked) {
+        e.preventDefault();
+        alert('Debes aceptar los términos del sistema para continuar.');
+        return false;
+      }
+
+      // Show loading state
+      submitBtn.disabled = true;
+      submitSpinner.classList.remove('d-none');
+      submitIcon.classList.add('d-none');
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Procesando...';
+    });
+  }
+
+  // Helper function to calculate password strength
+  function calculatePasswordStrength(password) {
+    let score = 0;
+    let message = 'Muy débil';
+    let className = 'bg-danger';
+    let textClass = 'text-danger';
+
+    if (password.length >= 8) score += 25;
+    if (password.match(/[a-z]/)) score += 25;
+    if (password.match(/[A-Z]/)) score += 25;
+    if (password.match(/[0-9]/)) score += 12.5;
+    if (password.match(/[^a-zA-Z0-9]/)) score += 12.5;
+
+    if (score >= 75) {
+      message = 'Muy fuerte';
+      className = 'bg-success';
+      textClass = '';
+    } else if (score >= 50) {
+      message = 'Fuerte';
+      className = 'bg-info';
+      textClass = '';
+    } else if (score >= 25) {
+      message = 'Débil';
+      className = 'bg-warning';
+      textClass = '';
+    }
+
+    return {
+      percentage: Math.min(100, score),
+      message: message,
+      class: className,
+      textClass: textClass
+    };
+  }
+
+  // Auto-focus first field
+  const firstField = document.querySelector('.form-control');
+  if (firstField) {
+    firstField.focus();
+  }
+});
+</script>
+{% endblock %}
